@@ -1,0 +1,332 @@
+= sfSimpleCMSPlugin =
+
+== Overview ==
+
+This plugin allows you to add a simple Content Management System (CMS) to your symfony application with the following features:
+  - Uses Javascript and Ajax to provide a neat user experience
+  - Edit zones in pages
+  - Edit page URL (you can use / in page path)
+  - Edit content in the real context ('edit in place')
+  - Preview result
+  - Create and manage a tree structure for pages
+  - i18n ready (the interface is translated)
+  - l10n ready (a page can have different versions)
+  - support multiple templates
+  - Basic publication workflow
+  - Breadcrumb navigation  
+  - User management is controlled through [wiki:sfGuardPlugin]  
+
+It is not aimed at replacing full-featured CMS packages, but offers a lightweight alternative for when you build a website that has to contain pages often updated by special users. It is voluntarily simple, and very easy to configure; so it should fulfill most basic CMS requirements.
+
+Please note that this plugin is in active development. If you want to help and improve it, please contact François Zaninotto.
+
+== Screenshots ==
+
+[[Image(sfSimpleCMS_1.gif, 30%)]]  
+[[Image(sfSimpleCMS_2.gif, 30%)]]  
+[[Image(sfSimpleCMS_3.gif, 30%)]] 
+
+== Requirements ==
+
+The prerequisites for using the `sfSimpleCMS` plugin are:
+
+ - As the plugin doesn't contain a user management module, the project where you install it must have a table managing authors, or users (whatever the name), and the related Propel class must have a `__toString()` method. Both these conditions are satisfied by the [http://trac.symfony-project.com/trac/wiki/sfGuardPlugin sfGuardPlugin], so installing this plugin is a good choice.
+
+ - The page tree strucure uses the [http://trac.symfony-project.com/trac/wiki/sfPropelActAsNestedSetBehaviorPlugin sfPropelActAsNestedSetBehaviorPlugin]. The plugin must be installed and behaviors enabled in your `propel.ini`.
+ 
+ - You need a database capable of handling right joins. MySQL, PostGreSQL are fine, SQLite is not enough.
+ 
+ - Rich text editing uses tinyMCE. You must install tinyMCE if you want a wysiwyg interface for text editing.
+ 
+To install the plugin for a symfony project, the usual process is to use the symfony command line:
+{{{
+$ php symfony plugin-install http://plugins.symfony-project.com/sfSimpleCMSPlugin
+}}}
+
+Alternatively, if you don't have PEAR installed, you can download the latest package attached to this plugin's wiki page and extract it under your project's `plugins/` directory. You will also have to copy the contents of the `myproject/plugins/sfSimpleCMSPlugin/web/` directory into a `myproject/web/sfSimpleCMSPlugin/` directory.
+
+Rebuild the model, generate the SQL code for the new tables and insert it into your database:
+{{{
+$ php symfony propel-build-all
+}}}
+
+Clear the cache to enable the autoloading to find the new classes:
+{{{
+$ php symfony cc
+}}}
+
+You can load the included fixtures to start using the forum with test data. These are dsigned to be an inline help, so don't hesitate to use them the first time you test the plugin.
+{{{
+$ php symfony propel-load-data frontend plugins\sfSimpleCMSPlugin\data\fixtures
+}}}
+
+Enable the new `sfSimpleCMS` and `sfSimpleCMSAdmin` modules in your application, via the `settings.yml` file.
+{{{
+// in myproject/apps/frontend/config/settings.yml
+all:
+  .settings:
+    enabled_modules:        [default, sfSimpleCMS, sfSimpleCMSAdmin]
+}}}
+
+Start using the plugin by browsing to the admin module's default page:
+{{{ 
+http://myproject/frontend_dev.php/sfSimpleCMSAdmin
+}}}
+
+There, you will be able to create the root page (if you didn't insert the fixtures) and add new pages. You will also be able to access the new pages in edit mode from the admin section.
+
+== Basic usage ==
+
+Pages created by the `sfSimpleCMSPlugin` all have a path property. Using this path, you will be able to see the page in the frontend. For instance, if a page is created with the path `foo/bar`, you will be able to see it by browsing to:
+
+{{{
+http://myproject/frontend_dev.php/cms/foo/bar
+}}}
+
+Only published pages are accessible that way.
+
+To edit it, just add a `?edit=true` query string to this URL. If the current user has the proper credentials, he will then get access to the edit features:
+
+{{{
+http://myproject/frontend_dev.php/cms/foo/bar?edit=true
+}}}
+
+In this mode, all the editable zones of a page can be modified by double-clicking in the zone and changing the content in the form control that appears. Even unpublished pages can be edited that way.
+
+Once the page is edited, you can preview the result by adding `preview=true` to the query string:
+
+{{{
+http://myproject/frontend_dev.php/cms/foo/bar?edit=true&preview=true
+}}}
+
+The '''editor toolbox''' will automate all that and, in practice, you will never need to edit the URL.
+
+== Usage inside another page ==
+
+You can choose to add an editable CMS component to an existing template somewhere else in your application. For instance, the home page of a website can be managed by the `main/index` action and contain an editable part. To achieve this, use the `sfSimpleCMS/embed` component in the template as follows:
+
+{{{
+// in modules/main/templates/indexSuccess.php
+<?php include_component('sfSimpleCMS', 'embed', array('slug' => 'test')) ?>
+}}}
+
+The page must already exist in order to be embedded, so create it in the `sfSimpleCMSAdmin` module first and then include it in the target template.
+
+When you want to edit the zones of the page, just add the `?edit=true` query string to the normal URL.
+
+{{{
+http://localhost/main/index?edit=true
+}}}
+
+This allows you to use only the content editing part of the plugin and not the page controller part.
+
+'''Note''': This feature is experimental; that's why the editor toolbar does not appear in these cases. You can only embed one CMS page per template, and it is not possible to change the template of the CMS page directly from the target template for now.
+
+== Slots ==
+
+The templates of the `sfSimpleCMS` module define some slots that you cna use inside your layout:
+  - `sfSimpleCMS_site_name`: Site name, based on the `app.yml` configuration
+  - `sfSimpleCMS_main_navigation`: List of level 1 pages
+  - `sfSimpleCMS_breadcrumb`: Breadcrumb trail of links to the current page
+
+An example layout to display all the information of the template is given below. This template is bundled with a CSS and activated by default in the plugin.
+
+{{{
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/2000/REC-xhtml1-200000126/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<?php echo include_http_metas() ?>
+<?php echo include_metas() ?>
+<?php echo include_title() ?>
+<?php include_slot('auto_discovery_link_tag') ?>
+<link rel="shortcut icon" href="/favicon.ico">
+
+</head>
+<body>
+	
+<div id="cms">
+  <?php if(!include_slot('sfSimpleCMS_main_navigation')): ?>
+    <div id="mainNavigation">
+      <?php include_component('sfSimpleCMS', 'mainNavigation', array('page' => $page, 'culture' => $culture)); ?>
+    </div>
+  <?php endif; ?>
+  
+  <?php if(!include_slot('sfSimpleCMS_site_name')): ?>
+    <div id="site_name">
+      <?php echo link_to(
+        sfConfig::get('app_sfSimpleCMS_home_link', 'My Swell site'),
+        sfSimpleCMSTools::urlForPage(sfConfig::get('app_sfSimpleCMS_default_page', 'home')),
+        array('class' => 'cms_page_navigation')) ?>
+    </div>
+  <?php endif; ?>
+    
+  <?php if(!include_slot('sfSimpleCMS_breadcrumb')): ?>
+    <?php include_partial('sfSimpleCMS/breadcrumb', array('page' => $page, 'culture' => $culture)) ?>
+  <?php endif; ?>
+  
+  <div id="content" >
+    <?php echo $sf_data->getRaw('content') ?>
+  </div>
+
+</div>
+
+</body>
+</html>
+}}}
+
+To deactivate this layout, turn `use_bundled_layout` to `false` in your `app.yml` (see below).
+
+== Configuration ==
+
+=== `app.yml` ===
+
+Some of the features of the plugin can be altered by configuration. To do so, add some of the following lines to your application's `app.yml`:
+
+{{{
+all:
+  sfSimpleCMS:
+    default_text:           '[add text here]'   # Default text for page editable parts
+    routes_register:        on                  # Use the plugin's routes 
+    rich_editing:           off                 # Use TinyMCE for rich text editing
+    tinymce_options:                            # Additional TinyMCE initialization options
+    default_page:           home                # Slug (=path) of the default root page
+    use_bundled_layout:     true                # Use the layout bundled with the plugin (allows native display of navigation menu and breadcrumb)
+    use_bundled_stylesheet: true                # Use the stylesheet bundled with the plugin (only makes sens if you use the bundled layout, too)
+    home_link:              My swell site       # What is displayed on the top right corner of the pages (can be HTML code)
+    tagline:                All there is to know about [you name it]
+    footer_message:         Powered by sfSimpleCMS and symfony
+    max_pages_in_list:      5                   # Maximum number of links displayed in an internal list of links
+    use_l10n:               false               # Enable multiple versions for a single page
+    escaping_strategy:      ESC_RAW             # How content entered in the CMS interface must be escaped. Leave at ESC_RAW for no escaping
+    localizations:          [en, fr, es]        # If l10n is enabled, list of cultures in which pages are available
+    default_culture:        en                  # If l10n is not enabled, default culture for pages
+    editor_credential:                          # Name of the credential required for page editing (leave blank for free editing)
+    publisher_credential:                       # Name of the credential required for page publishing (leave blank for free publishing)
+    templates:                                  # Available templates 
+      simplePage:           Simple Page         #   the key is the name of a template which must be present in modules/sfSimpleCMS/templates/
+      home:                 Home                #   the value is the name under which the template is presented in lists
+    slot_types:                                 # Available slot types
+      Text:           Simple text
+      RichText:       Rich text
+      Php:            PHP code
+      Image:          Image
+      Modular:        List of partials/components
+}}}
+
+=== Routing rules ===
+
+The plugin comes with a few routing rules.
+
+{{{
+# main route to browsing the pages
+sf_cms_show:
+  url: /cms/:slug
+  param: { module: sfSimpleCMS, action: show }
+  requirements: { slug: '.*'}
+
+sf_cms_delete:
+  url: /cms_delete/:slug
+  param: { module: sfSimpleCMS, action: delete }
+  requirements: { slug: '.*'}
+
+sf_cms_toggle_publish:
+  url: /cms_publish/:slug
+  param: { module: sfSimpleCMS, action: togglePublish }
+  requirements: { slug: '.*'}
+}}}
+
+If you want to use your own routes instead, turn the `routes_register` parameter to `off` in the `app.yml`.
+
+=== Templates ===
+
+The plugin is bundled with a few basic templates, but you will definitely need to add your own templates.
+
+CMS templates are files located under the `sfSimpleCMS` module's `templates/` directory, with a name ending with `Template.php`. A template must include the `sfSimpleCMS` helper group and call the `include_editor_tools()` helper at the bottom. 
+
+As for page zones, you will need two more helpers to manipulate them:
+
+ * `sf_simple_cms_has_slot($slot_name)`: returns true if a page slot is set, false otherwise
+ * `sf_simple_cms_slot($slot_name, $default text)`: includes the slot if in view mode, or the editable version of the slot if in edit mode.
+ 
+The possible values for the slot name are currently limited to: `Title`, `Slot1`, `Slot2`, `Slot3`, `Slot4`.
+
+== TODO ==
+
+ * Optimize queries for breadcrumb and navigation to retrieve title in a single query
+ * Add a 'type' column to the Page object to deal with pages not handled by the CMS controller, but that must appear in the navigation (mostly internal and external links)
+ * Solve the orphan slots problem
+ * Change Image slot type to a list of images (cf. Modular slot type)
+ * Published status per localization
+ * Add more templates
+ * Add more components and partials to be used in templates
+ * Refactor the `sfSimpleCMS` action code to make it DRYier (use mixins?)
+ * Better integration with sfGuard
+ * Package with other plugins into an application
+ 
+== Changelog ==
+
+=== 2008-02-28 | 0.7.3 Beta ===
+
+ * francois: Added a validation for the slug and the position
+ * francois: Added the ability to use a partial in the modular slot
+ * francois: Allowed for extension of the `sfSimpleCMSAdmin` actions class
+ * francois: Switched private methods to protected in `BaseActions` classes
+ * francois: Removed inline styles in slot editors
+ * francois: Fixed Admin list proposing the creation of a new root when applying a filter with no result
+ * francois: Fixed the way language names appear in the interface when using composite cultures
+ * francois: Fixed publish, unpublish and delete controlds on the edition panel
+ * francois: Fixed issue with output escaping
+
+=== 2007-09-08 | 0.7.2 Beta ===
+
+ * francois: Fixed ability to remove default stylesheet
+ * francois: Fixed non-working default page for `sfSimpleCMS` module
+ * francois: Fixed wrong token name for culture
+ * francois: Added handling of additional TinyMCE initialization options in `app.yml`
+ * francois: Fixed wrong handling of primary/foreign keys in schema
+ * francois: Fixed wrong slot type label formatting
+ * francois: Reduced the query count with smart (and complex) joins
+ * francois: Turned breadcrumb partial into a component
+ 
+=== 2007-08-13 | 0.7.1 Alpha === 
+
+ * francois: Better test data (now almost a user documentation!)
+ * francois: Added a `sfSimpleBlog/latestsPages` component
+ * francois: (Slightly) Improved default CSS
+ * francois: Fixed unpublished pages appear in main navigation when not editing
+ * francois: Refactored page templates to use a layout and avoid repetition
+ * Francois: Cleaner schema for better fixtures handling
+ * francois: Added the ability to embed a CMS page inside another template via the `sfSimpleCMS/embed` component
+
+=== 2007-07-19 | 0.7.0 Alpha === 
+
+ * francois: [Break BC] Refactored slot system. Now a page can have an unlimited number of slots
+ * francois: Fixed bug with publisher credentials in admin list
+ * francois: Fixed missing translation helpers in admin list
+ 
+=== 2007-07-19 | 0.6.3 Beta === 
+
+ * francois: Fixed bug when l10n is off
+ * francois: Fixed bug when nothing is defined in app.yml
+ * francois: Reworked the default templates a bit
+ * francois: Added a new 'mainNavigation' component
+ * francois: Modified the way links change in edit mode (now uses JavaScript)
+ * francois: Added a new Image slot type to show how to add a custom slot type
+ * francois: Refactored Slot types to object (easier to extend)
+ * francois: Modified test data to show more about the possible slot types
+
+=== 2007-07-18 | 0.6.2 Beta === 
+
+ * francois: Added the ability to use a list of components as the value of a slot
+ * francois: Fixed problem with encoded placeholder on certain configurations
+ * francois: Fixed problem when using SQLite in sfSimpleCMSAdmin module
+ * francois: Added simple text formatting to simple text slots
+ 
+=== 2007-07-18 | 0.6.1 Beta === 
+
+ * francois: Fixed i18n problem on case-sensitive filesystems (#1991)
+
+=== 2007-07-16 | 0.6.0 Beta === 
+
+ * francois: Initial release

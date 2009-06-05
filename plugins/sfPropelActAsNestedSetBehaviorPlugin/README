@@ -1,0 +1,356 @@
+= sfPropelActAsNestedSetBehaviorPlugin plugin =
+
+The `sfPropelActAsNestedSetBehaviorPlugin` is a symfony plugin that provides nested set capabilities to Propel objects.
+
+Nested sets (aka modified preorder tree traversal) is a very efficient way (in terms of performances) to browse and edit a tree like structure in an RDBMS.
+
+You can read [http://dev.mysql.com/tech-resources/articles/hierarchical-data.html a good introduction to nested sets] on MySQL developers' zone.
+
+== Features ==
+
+ * Fully unit tested
+ * Possibility to store multiple trees in the same table
+ * Atomic operations
+ * Also maintains adjacency list properties, making your classes compatible with code based on this tree traversal methodology
+ 
+== Limitations ==
+
+As of now, the plugin is known to work with MySQL and PostgreSQL (in trunk). Other RDBMS may work but without any guaranty.
+Patches are welcome, of course :)
+
+== Installation ==
+
+  * Install the plugin
+  
+    {{{
+      symfony plugin-install http://plugins.symfony-project.com/sfPropelActAsNestedSetBehaviorPlugin
+    }}}
+
+  * Add new fields to your schema.xml
+    
+   {{{
+   #!xml
+    <column name="tree_left"   type="INTEGER"   required="true" /> 
+    <column name="tree_right"  type="INTEGER"   required="true" /> 
+    <column name="tree_parent" type="INTEGER"   required="true" /> 
+    <column name="scope"       type="INTEGER"   required="true" />
+   }}}
+
+  `scope` and `tree_parent` columns can be of any type. 
+
+  * Enable Propel behavior support in `propel.ini`:
+
+    {{{
+      propel.builder.AddBehaviors = true
+    }}}
+  
+    If you have to enable the behavior support, rebuild your model:
+
+    {{{
+      symfony propel-build-model
+    }}}
+
+  * Enable the behavior for one of your Propel model:
+
+    {{{
+    #!php
+    <?php
+      // lib/model/ForumPost.php
+      class ForumPost
+      {
+      }
+
+      $columns_map = array('left'   => ForumPostPeer::TREE_LEFT,
+                           'right'  => ForumPostPeer::TREE_RIGHT,
+                           'parent' => ForumPostPeer::TREE_PARENT,
+                           'scope'  => ForumPostPeer::TOPIC_ID);
+ 
+      sfPropelBehavior::add('ForumPost', array('actasnestedset' => array('columns' => $columns_map)));
+    }}}
+
+  The ''column map'' is used by the behavior to know which columns hold information it needs :
+  
+    * left : Model column holding nested set left value for a row
+    * right : Model column holding nested set right value for a row
+    * parent : Model column holding row's parent id (this is necessary because we use adjacency list tree traversal for some methods)
+    * scope : Model column holding row's scope id. The scope is used to differenciate trees stored in the same table
+
+== Usage ==
+
+=== Simple tree creation ===
+
+{{{
+#!php
+<?php
+  $root = new ForumPost();
+  $root->makeRoot();
+  $root->save();
+
+  $p1 = new ForumPost();
+  $p1->insertAsFirstChildOf($root);
+  $p1->save();
+
+  $p2 = new ForumPost();
+  $p2->insertAsFirstChildOf($p1);
+  $p2->save();
+
+  /*
+   * Resulting tree :
+   *
+   * ROOT
+   * |- P1
+   *    |- P2
+   */
+}}}
+
+=== Multiple trees in a single table ===
+
+{{{
+#!php
+<?php
+  $root1 = new ForumPost();
+  $root1->makeRoot();
+  $root1->setTopicId(1);
+  $root1->save();
+
+  $root2 = new ForumPost();
+  $root2->makeRoot();
+  $root2->setTopicId(2);
+  $root2->save();
+
+  $p1 = new ForumPost();
+  $p1->insertAsFirstChildOf($root1);
+  $p1->save();
+
+  $p2 = new ForumPost();
+  $p2->insertAsFirstChildOf($root2);
+  $p2->save();
+
+  /*
+   * Resulting trees :
+   *
+   * ROOT1
+   * |- P1
+   * 
+   * ROOT2
+   * |- P2
+   */
+}}}
+
+=== Lame threaded forum posts list example ===
+
+{{{
+#!php
+  <?php $root = ForumPostPeer::retrieveByPk(rootnodepk); ?>
+  <ul>
+    <?php echo $root->getTitle() ?>
+
+    <?php foreach ($root->getDescendants() as $post): ?>
+
+       <li style="padding-left: <?php echo $post->getLevel() ?>em;">
+            <?php echo $post->getTitle() ?>
+       </li>
+
+    <?php endforeach; ?>
+  </ul>
+}}}
+
+=== Using nested sets and sfPropelPager ===
+
+{{{
+#!php
+<?php
+  // Decide which posts to fetch
+  $c = new Criteria();
+  $c->add(ForumPostPeer::TOPIC_ID, $topic_id);
+  $c->addAscendingOrderByColumn(ForumPostPeer::TREE_LEFT); // ForumPostPeer::TREE_LEFT is the column holding nested set's left value
+    
+  // Create pager
+  $pager = new sfPropelPager('ForumPost', 10);
+  $pager->setCriteria($c);
+  $pager->setPage($this->getRequestParameter('page', 1));
+  $pager->init();
+}}}
+
+== Public API ==
+
+Enabling the behaviors adds the following method to the Propel objects :
+
+=== Insertion methods ===
+
+ * `void insertAsFirstChildOf(BaseObject $dest_node)` : Inserts node as first child of given node.
+ * `void insertAsLastChildOf(BaseObject $dest_node)` : Inserts node as last child of given node.
+ * `void insertAsNextSiblingOf(BaseObject $dest_node)` : Inserts node as next sibling of given node.
+ * `void insertAsPrevSiblingOf(BaseObject $dest_node)` : Inserts node as previous sibling of given node.
+ * `void insertAsParentOf(BaseObject $dest_node)` : Inserts node as parent of given node
+
+=== Informational methods ===
+
+ * `bool hasChildren()` : Returns true if given node as one or several children.
+ * `bool isRoot()` : Returns true if given node is a root node.
+ * `bool hasParent()` : Returns true if given node has a parent node.
+ * `bool hasNextSibling()` : Returns true if given node has a next sibling.
+ * `bool hasPrevSibling()` : Returns true if given node has a previous sibling.
+ * `bool isLeaf()` : Returns true if given node does not have children.
+ * `bool isChildOf(BaseObject $node)` : Returns true if given node is parent of node.
+ * `bool isDescendantOf(BaseObject $node)` : Returns true if given node is descendant of node.
+ * `integer getNumberOfChildren()` : Returns given node number of direct children.
+ * `integer getNumberOfDescendants()` : Returns given node number of descendants (n level).
+ * `integer getLevel()` : Returns given node level.
+
+=== Node retrieval methods ===
+
+ * `BaseObject|null getParent($peer_method = 'retrieveByPk')` : Returns node parent or null if node does not have a parent.
+ * `array getChildren($peer_method = 'doSelect')` : Returns given node direct children.
+ * `array getDescendants($peer_method = 'doSelect')` : Returns given node descendants (n level).
+ * `BaseObject retrieveNextSibling()` : Returns given node next sibling.
+ * `BaseObject retrievePrevSibling()` : Returns given node previous sibling.
+ * `BaseObject retrieveFirstChild()` : Returns given node first child.
+ * `BaseObject retrieveLastChild()` : Returns given node last child.
+ * `BaseObject retrieveParent($peer_method = 'doSelectOne')` : Returns given node parent.
+ * `array retrieveSiblings()` : Returns node siblings.
+ * `array getPath($peer_method = 'doSelectOne')` : Returns path to a specific node as an array, useful to create breadcrumbs.
+
+=== Tree modification methods ===
+
+ * `void moveToFirstChildOf(BaseObject $dest_node)` : Moves node to first child of given node.
+ * `void moveToLastChildOf(BaseObject $dest_node)` : Moves node to last child of given node.
+ * `void moveToNextSiblingOf(BaseObject $dest_node)` : Moves node to next sibling of given node.
+ * `void moveToPrevSiblingOf(BaseObject $dest_node)` : Moves node to previous sibling of given node.
+ * `void deleteChildren()` : Deletes node direct children
+ * `void deleteDescendants()` : Deletes node descendants (n level)
+
+=== Helper methods ===
+
+ * `void makeRoot()` : Sets node properties to make it a root node.
+ * `BaseObject reload()` : Returns an up to date version of node
+ * `bool isEqualTo(BaseObject $node)` : Returns true if given node is equivalent to node.
+
+== Roadmap ==
+
+=== 0.10.0 ===
+
+==== Features ====
+
+ * add support for symfony's i18n capabilities
+ * add criteria option to more methods
+ * add `$peer_method` as an optional parameter to `getParent()` and `getPath()` 
+ * add multiple connections support
+ * add transactional support
+ * get rid of mysql dependency : rewrite queries "criteria-like" or implement adapter.
+ * add a method to copy a whole tree to another scope
+ * make it possible to delete a root node that has children
+ 
+== Changelog ==
+
+=== 2007-07-23 | 0.9.1-beta ===
+
+==== Bugfixes ====
+
+ * fixed `getLevel()` cache (gordon franke)
+ * fixed scope handling : scope can be any type of data (Jorn.Wagner)
+ * `retrieveFirstChild()` and `retrieveLastChild()` missing references to scope node (Olivier.Mansour)
+ * fixed postgresql compatibility (Maciej.Filipiak & Krasimir.Angelov)
+ * added a note about supported RDBMS (tristan)
+ * made roadmap clearer (tristan)
+ * removed useless Propel::getConnection (Eric.Fredj)
+ * fixed scope handling in `deleteDescendants()` (Piers.Warmers)
+ * fixed new `getDescendants()` implementation node level caching (tristan)
+
+==== Enhancements ====
+
+ * added new `isDescendantOf()` method (Piers.Warmers)
+ * implemented faster getPath() method (francois)
+ * implemented faster `getDescendants()` (Jon.Collins)
+
+=== 2007-05-24 | 0.9.0-beta ===
+
+ * Licence change : MIT -> LGPL
+ * Please welcome a new maintainer : Gordan Franke :)
+ * tree "dumper" utility method :  `sfPropelActAsNestedSetBehaviorUtils::dumpTree()`
+ * add optional select method for getPath|getParent|retrieveParent (gordon)
+
+=== 2007-04-18 | 0.8.2-beta ===
+
+ * added `getParent()` method (olivier mansour)
+ * added `getLevel()` unit tests
+ * implemented caching of level in collection retrieval methods : `getDescendants()`, `getChildren()`, `retrieveSiblings()`
+ * defined plugin roadmap
+
+=== 2007-03-22 | 0.8.1-beta ===
+
+ * fixed #1480 : non-abstracted column name (paul markovitch)
+ * fixed bug in `getStubFromPeer()`
+ * `makeRoot()` should accept non new objects (peter van garderen)
+ * `getDescendants()` should not try to get descendants if node is a leaf (peter van garderen)
+ * updated unit tests
+ * enabled syntax highlighting in README
+
+=== 2007-02-19 | 0.8.0-beta ===
+
+Implemented more methods (+ unit tests) :
+
+ * `insertAsParentOf`
+ * `retrieveSiblings`
+ * `isEqualTo`
+ * `isChildOf`
+
+Enhanced internal API
+
+=== 2007-02-19 | 0.7.0-beta ===
+
+Implemented missing methods (+ unit tests) :
+ 
+ * `moveToPrevSiblingOf`
+ * `moveToNextSiblingOf`
+ * `deleteChildren`
+ * `deleteDescendants`
+
+=== 2007-02-19 | 0.6.2-beta ===
+
+Fixed a bug due to wrong usage of `rtrim`. (Thanks to Krešo Kunjas)
+
+=== 2007-02-15 | 0.6.1-beta ===
+
+Fixed minor bug in `getPath()`
+
+=== 2007-02-15 | 0.6.0-beta ===
+
+Implemented missing node retrieval methods : 
+
+ * `retrieveFirstChild`
+ * `retrieveLastChild`
+ * `retrieveParent`
+ * `getPath`
+ 
+Updated docs and unit tests accordingly
+
+=== 2007-02-14 | 0.5.1-beta ===
+
+Pear package missed plugin's config.php file.
+
+=== 2007-02-14 | 0.5.0-beta ===
+
+Initial public release. The behavior is stable and fully unit-tested, but the API is not yet complete. Missing methods :
+
+ * `retrieveFirstChild`
+ * `retrieveLastChild`
+ * `moveToPrevSiblingOf`
+ * `moveToNextSiblingOf`
+ * `deleteChildren`
+ * `deleteTree`
+ * `getPath`
+
+== Maintainers ==
+ 
+Tristan Rivoallan and Gordon Franke.
+
+== Contributors ==
+
+Krasimir Angelov, Jon Collins, Maciej Filipiak, Eric Fredj, Peter van Garderen, Olivier Mansour, Paul Markovitch,
+Krešo Kunjas, Piers Warmers, Francois Zaninotto.
+
+Plugin's code is based on work from [http://propel.phpdb.org/trac/ticket/312 Heltem] 
+and [http://www.symfony-project.com/forum/index.php/m/20657/ Joe Simms]. 
+
+Thanks to all of you !

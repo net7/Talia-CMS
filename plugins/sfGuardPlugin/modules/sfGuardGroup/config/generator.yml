@@ -1,0 +1,15 @@
+generator:
+  class:              sfPropelAdminGenerator
+  param:
+    model_class:      sfGuardGroup
+    theme:            default
+
+    list:
+      title: Group list
+      display:        [=name, description]
+
+    edit:
+      title:        Edit "%%name%%" group
+      fields:
+        permissions:  { type: admin_double_list, params: through_class=sfGuardGroupPermission }
+      display:        [ name, description, permissions ]

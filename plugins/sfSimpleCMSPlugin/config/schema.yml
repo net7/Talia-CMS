@@ -1,0 +1,23 @@
+propel:
+  sf_simple_cms_page:
+    _attributes:  { phpName: sfSimpleCMSPage, package: plugins.sfSimpleCMSPlugin.lib.model }
+    id:
+    slug:         { type: VARCHAR, size: 255, index: unique }
+    tree_left:    { type: integer, required: true }
+    tree_right:   { type: integer, required: true }
+    tree_parent:  { type: integer, foreignTable: sf_simple_cms_page, foreignReference: id, required: false, onDelete: cascade }
+    topic_id:     { type: integer }
+    template:     varchar(100)
+    is_published: boolean
+    created_at:
+    updated_at:
+
+  sf_simple_cms_slot:
+    _attributes:  { phpName: sfSimpleCMSSlot, package: plugins.sfSimpleCMSPlugin.lib.model }
+    page_id:      { type: integer, foreignTable: sf_simple_cms_page, foreignReference: id, required: true, onDelete: cascade, primaryKey: true }
+    culture:      { isCulture: true, type: varchar(7), required: true, primaryKey: true }
+    name:         { type: varchar(100), required: true, primaryKey: true }
+    type:         { type: varchar(100), required: true, default: Text }        
+    value:        { type: longvarchar }
+    created_at:
+    updated_at:

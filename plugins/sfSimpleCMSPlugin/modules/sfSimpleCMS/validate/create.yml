@@ -1,0 +1,17 @@
+fillin:
+  enabled: on
+  param:
+    name: cms_tools_create_page
+
+fields:
+  create_slug:
+    required:
+      msg:            Please enter a path
+    sfPropelUniqueValidator:
+      class:          sfSimpleCMSPage
+      column:         slug
+      unique_error:   A page with this path already exits
+    sfRegexValidator:
+      pattern:        '#^[a-zA-Z0-9-_/]*$#'
+      match:          true
+      match_error:    A path can only be composed of alphanumeric characters and - _ / .

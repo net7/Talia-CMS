@@ -1,0 +1,100 @@
+= sfIconPlugin =
+
+== Overview ==
+
+sfIconPlugin is a Symfony plugin. It gives a set of icons (thanks to dryicons.com, see http://dryicons.com/free-icons/preview/aesthetica ) and a set of helper used to display the icon on the templates. 
+
+== Requirements ==
+
+This plugin has no dependencies on other sfPlugins
+
+== Installation ==
+
+You can install sfIconPlugin via PEAR (recommended) package manager or manually.
+=== PEAR installation ===
+
+ 1. The easiest way to install sfIconPlugin is to use PEAR package manager.
+
+ {{{
+ $ symfony plugin-install http://plugins.symfony-project.com/sfIconPlugin
+ }}}
+
+ Alternatively, if you don't have PEAR installed, you can download the latest package attached to this plugin's wiki page and extract it under your project's `plugins/` directory. You will also have to copy the contents of the `myproject/plugins/sfIconPlugin/web/` directory into a `myproject/web/sfIconPlugin/` directory.
+
+ 2. Now clear the cache with symfony clear-cache command to enable the autoloading to find the new classes:
+
+ {{{
+ $ symfony cc
+ }}}
+
+== Configuration ==
+
+No configuration is needed
+
+== Usage ==
+
+Before using sfIcon helpers you need to load them with `use_helper` statement.
+
+{{{
+    <?php use_helper('sfIcon'); ?>
+}}}
+
+Than you can use the simplest icon image tag
+{{{
+    <?php echo icon_add_tag(); ?>
+}}}
+
+This produce the tag image for small icons (16x16) add.png. 
+You you need bigger icons than use the following:
+24x24:
+{{{
+    <?php echo icon_add_tag('normal'); ?>
+}}}
+32x32:
+{{{
+    <?php echo icon_add_tag('large'); ?>
+}}}
+48x48:
+{{{
+    <?php echo icon_add_tag('huge'); ?>
+}}}
+
+For a generic image use
+{{{
+    <?php echo icon_tag($image_name,$size); ?>
+}}}
+Where size is a string with the usual values: small (default value), normal, large, huge.
+
+If you want to see the complete list of icons browse the directory plugins/sfIconPlugin/web/images/icons/16x16.
+
+A path equivalent heleper is present:
+{{{
+    <?php echo icon_path($image_name,$size); ?>
+}}}
+
+
+
+== Changelog ==
+2008-05-06: 0.1.0 beta
+ * Initial release
+
+2008-08-02: 0.1.1 beta
+ * GPL -> LGPL
+
+== Todo ==
+
+ * Complete the list of aliased helpers
+
+== Contacts ==
+
+If you have any questions or feedback feel free to contact me at [mailto:piccioli@netseven.it].
+
+Please include sfIconPlugin in the mail subject, this will help me tracking the conversation.
+
+
+== License ==
+
+sfIconPlugin is a symfony plugin created by Alessio Piccioli.
+For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+
+Aesthetica Icon Set, version 1.12, used in this symfony plugin, is licensed under a Creative Commons Attribution 3.0 License.  This means that you can do pretty much everything. However, you must include a link back to http://dryicons.com/ in your credits. Please contact us at contact@dryicons.com to discuss the licensing.

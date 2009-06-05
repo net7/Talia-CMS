@@ -1,0 +1,34 @@
+# default rules
+homepage:
+  url:   /
+  param: { module: sfSimpleCMS, action: index }
+
+simple_slug:
+  url: /:slug.html
+  param: { sf_culture: en, module: sfSimpleCMS, action: show }
+
+simple_slug_lang:
+  url: /:sf_culture/:slug.html
+  requirements: { sf_culture: (?:it|en|de|fr|es) }
+  param: { module: sfSimpleCMS, action: show }
+
+sf_guard_signin:
+  url:   /login
+  param: { module: sfGuardAuth, action: signin }
+
+sf_guard_signout:
+  url:   /logout
+  param: { module: sfGuardAuth, action: signout }
+
+sf_guard_password:
+  url:   /request_password
+  param: { module: sfGuardAuth, action: password }
+
+default_index:
+  url:   /:sf_culture/:module
+  requirements: { sf_culture: (?:en|it|de|fr|es) }
+  param: { action: index }
+
+default:
+  url:   /:sf_culture/:module/:action/*
+  requirements: { sf_culture: (?:en|it|de|fr|es) }

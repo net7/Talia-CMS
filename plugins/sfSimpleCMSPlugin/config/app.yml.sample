@@ -1,0 +1,28 @@
+all:
+  sfSimpleCMS:
+    default_text:           '[add text here]'   # Default text for page editable parts
+    routes_register:        on                  # Use the plugin's routes 
+    rich_editing:           off                 # Use TinyMCE for rich text editing
+    tinymce_options:                            # Additional TinyMCE initialization options
+    default_page:           home                # Slug (=path) of the default root page
+    use_bundled_layout:     true                # Use the layout bundled with the plugin (allows native display of navigation menu and breadcrumb)
+    use_bundled_stylesheet: true                # Use the stylesheet bundled with the plugin (only makes sens if you use the bundled layout, too)
+    home_link:              My swell site       # What is displayed on the top right corner of the pages (can be HTML code)
+    tagline:                All there is to know about [you name it]
+    footer_message:         Powered by sfSimpleCMS and symfony
+    max_pages_in_list:      5                   # Maximum number of links displayed in an internal list of links
+    use_l10n:               false               # Enable multiple versions for a single page
+    escaping_strategy:      ESC_RAW             # How content entered in the CMS interface must be escaped. Leave at ESC_RAW for no escaping
+    localizations:          [en, fr, es]        # If l10n is enabled, list of cultures in which pages are available
+    default_culture:        en                  # If l10n is not enabled, default culture for pages
+    editor_credential:                          # Name of the credential required for page editing (leave blank for free editing)
+    publisher_credential:                       # Name of the credential required for page publishing (leave blank for free publishing)
+    templates:                                  # Available templates 
+      simplePage:           Simple Page         #   the key is the name of a template which must be present in modules/sfSimpleCMS/templates/
+      home:                 Home                #   the value is the name under which the template is presented in lists
+    slot_types:                                 # Available slot types
+      Text:           Simple text
+      RichText:       Rich text
+      Php:            PHP code
+      Image:          Image
+      Modular:        List of components

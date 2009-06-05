@@ -1,0 +1,26 @@
+generator:
+  class:              sfPropelAdminGenerator
+  param:
+    model_class:      sfGuardUser
+    theme:            default
+
+    fields:
+      password_bis: { name: "Password (again)" }
+
+    list:
+      title:   User list
+      display: [ =username, created_at, last_login ]
+      filters: [ username, _groups ]
+
+    edit:
+      title: Edit "%%username%%" user
+      fields:
+        password:
+        password_bis:
+        groups:       { name: Groups/Roles, type: admin_double_list, params: through_class=sfGuardUserGroup }
+        permissions:  { name: permissions, type: admin_check_list, params: through_class=sfGuardUserPermission }
+        last_login:   { type: plain }
+      display:
+        "NONE":                   [ username, _password, _password_bis ]
+        "Information":            [ last_login ]
+        "Permissions and groups": [ is_active, groups, permissions ]

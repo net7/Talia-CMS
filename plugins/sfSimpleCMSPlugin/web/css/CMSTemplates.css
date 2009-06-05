@@ -1,0 +1,174 @@
+body
+{
+  margin: 0;
+  padding: 0;
+  background-color: #E1EAEF;
+}
+
+div#cms 
+{
+  width : 690px;
+  background-color: white;
+  margin: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0;
+  font-size: 12px;
+  font-family: verdana, sans-serif;
+  border: solid 1px grey;
+  border-top: none;
+}
+
+#head
+{
+  background: url(../images/head_bg.gif) repeat-x #F9F7ED;
+  padding: 10px;
+  border-bottom: solid 1px #f9f9f9;
+}
+
+#site_name
+{
+  font-size: 24px;
+  font-weight: bold;
+  font-family: 'Trebuchet MS', arial, sans-serif;
+  margin-top:10px;
+  background: url(../images/coffee_machine.png) no-repeat top left;
+  padding-left: 55px;
+}
+
+#site_name a
+{
+  color: #004080;
+}
+
+#site_tagline
+{
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'Trebuchet MS', arial, sans-serif;
+  margin-bottom: 5px;
+}
+
+#mainNavigation
+{
+  background: #C9AB6F url(../images/nav_bg.gif) repeat-x scroll 0%;
+  border-bottom:1px solid #004080;
+  font-weight: bold;
+  float: left;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+#mainNavigation ul.site_navigation li
+{
+  display: inline;
+  background: transparent url(../images/nav-item_bg.gif) no-repeat scroll right center;
+  text-align: center;
+  float: left;
+}
+
+#mainNavigation ul.site_navigation li.current a
+{
+  color : black;
+}
+
+#mainNavigation ul.site_navigation li a
+{
+  color: #004080;
+  padding: 0.6em 1em;
+  display: block;
+  float: left;
+}
+
+#content
+{
+  padding: 10px;
+}
+
+#content.simplePage
+{
+  padding-right: 150px;  
+}
+
+#cms h2
+{
+  font-size: 18px;
+  font-family: 'Trebuchet MS', arial, sans-serif;
+  margin: 10px 0;
+  border-bottom: solid 1px lightgrey;
+}
+
+#cms h3
+{
+  margin: 10px 0;
+}
+
+#cms .cms_head
+{
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+#cms .cms_related, #cms .cms_references, #cms .cms_about
+{
+  margin: 10px 0;
+}
+
+.cms_main p, .cms_related p, .cms_references p, #cms .cms_presentation p
+{
+  margin-bottom: 0.5em;
+}
+
+#content ul
+{
+  list-style: inside;
+}
+
+#cms .cms_presentation 
+{
+  margin-right: 290px;
+  margin-top: 10px;
+}
+
+#cms .cms_title
+{
+  padding: 10px;
+  border: solid 1px lightgrey;
+  font-size: 1.2em;
+  text-align: center;
+}
+
+#cms .cms_updates 
+{
+  width: 270px;
+  float: right;
+}
+
+#cms .cms_about 
+{
+  clear: right;
+}
+
+#cms ul#breadcrumb_trail li
+{
+  display: inline;
+  list-style: none;
+  padding-right: 16px;
+  background: url(../images/tab_right.png) right no-repeat;
+  font-size: 11px;
+}
+
+#cms ul#breadcrumb_trail li.last
+{
+  background: none;
+}
+
+#footer_message
+{
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 11px;
+  width : 690px;
+  text-align: center;
+  margin-top: 5px;
+}

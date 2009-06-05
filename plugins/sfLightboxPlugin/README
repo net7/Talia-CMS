@@ -1,0 +1,241 @@
+= sfLightboxPlugin =
+
+`sfLightboxPlugin` is a symfony plugin that provides an easy to use wrapper for the [http://www.huddletogether.com/projects/lightbox2/ Lightbox2 javascript library].
+
+It adds a new helper file : `LightboxHelper` with 6 new functions:
+   * '''light_image''', to display an image (with lightbox) on an image link
+   * '''light_image_text''', to display an image with a text link
+   * '''light_slideshow''', to display a slideshow with an image set
+   * '''light_slide_image''', to display a slideshow with an image link
+   * '''light_slide_text''', to display a slideshow with a text link
+   * '''light_modallink''', to display a modal popup with any content
+
+== Installation ==
+
+  * Install the plugin (check the installation TAB of the plugin on the symfony website)
+  (or check out from the svn repository: http://svn.symfony-project.com/plugins/sfLightboxPlugin)
+  
+  * If you don't want to use the following web resources paths :
+    - /sfLightboxPlugin/js/
+    - /sfLightboxPlugin/css/
+    - /sfLightboxPlugin/javascript/
+    
+  You will have to modifiy the path in 'lightbox.css', 'lightbox.js', 'modalbox.js' and the 'config.php' of the plugin (or make your own in your application by creating a sfLightboxPlugin module) You also have a french picture for the close button in '/web/images/fr/', you will also have to change the path if you want to use it for now.
+
+  * Clear you cache
+  
+  {{{
+    ./symfony cc
+  }}}
+
+=== Usage ===
+
+  * 1 - Declare the helper
+
+  {{{
+<?php use_helper('Lightbox'); ?>
+  }}}
+
+
+  * 2 - To display a lightbox link to one image (check the '''_single_images.php''' template inside the plugin module)
+
+  {{{
+<h1>Single images</h1>
+<hr/>
+<br/>
+<h2>&nbsp;&nbsp;&raquo; On an image link</h2>
+<?php
+
+$image_options = array('title' => 'Optional caption Image 1.');
+
+// Test light_image
+echo light_image(
+    'http://www.huddletogether.com/projects/lightbox2/images/thumb-1.jpg', 
+    'http://www.huddletogether.com/projects/lightbox2/images/image-1.jpg', 
+    $image_options
+);
+
+echo '&nbsp;&nbsp;';
+
+$image_options = array('title' => 'Optional caption Image 2.');
+echo light_image(
+    'http://www.huddletogether.com/projects/lightbox2/images/thumb-2.jpg', 
+    'http://www.huddletogether.com/projects/lightbox2/images/image-2.jpg', 
+    $image_options
+);
+
+?>
+
+<br/><br/>
+<h2>&nbsp;&nbsp;&raquo; On a standart text link</h2>
+
+<?php echo light_image_text(
+  '&raquo; Click me to see the image !! &laquo;', 
+  'http://www.huddletogether.com/projects/lightbox2/images/image-2.jpg'
+);
+  }}}
+
+  * 3 - To display a slide show of several images (check the '''_image_set.php''' template inside the plugin module)
+  
+  {{{
+<br/><br/><br/>
+<h1>Image set</h1>
+<hr/>
+<br/>
+<h2>&nbsp;&nbsp;&raquo; For all images of the set</h2>
+
+<?php
+
+// To display a slide show of several images
+$images[] = array(
+    'thumbnail' => 'http://www.huddletogether.com/projects/lightbox2/images/thumb-3.jpg',
+    'image'     => 'http://www.huddletogether.com/projects/lightbox2/images/image-3.jpg',
+    'options'   => array('title' => 'Roll over and click right side of image to move forward.')
+);
+
+$images[] = array(
+    'thumbnail' => 'http://www.huddletogether.com/projects/lightbox2/images/thumb-4.jpg',
+    'image'     => 'http://www.huddletogether.com/projects/lightbox2/images/image-4.jpg',
+    'options'   => array('title' => 'Alternatively you can press the right arrow key.')
+);
+
+$images[] = array(
+    'thumbnail' => 'http://www.huddletogether.com/projects/lightbox2/images/thumb-5.jpg',
+    'image'     => 'http://www.huddletogether.com/projects/lightbox2/images/image-5.jpg',
+    'options'   => array('title' => 'The script preloads the next image in the set as you\'re viewing.')
+);
+
+$images[] = array(
+    'thumbnail' => 'http://www.huddletogether.com/projects/lightbox2/images/thumb-6.jpg',
+    'image'     => 'http://www.huddletogether.com/projects/lightbox2/images/image-6.jpg',
+    'options'   => array('title' => 'Press Esc to close')
+);
+
+$link_options = array(
+    'title'     => 'Lightbox2',
+    'slidename' => 'lightbox',
+);    
+
+
+echo light_slideshow($images, $link_options);
+?>
+
+<br/><br/>
+<h2>&nbsp;&nbsp;&raquo; For all images of the set as an html list</h2>
+
+<ul>
+<?php 
+
+$link_options = array(
+    'title'     => 'Lightbox2-list',
+    'slidename' => 'lightbox_list',
+);    
+  
+  echo light_slideshow($images, $link_options, true); ?>
+</ul>
+
+<br/><br/>
+<br/>
+<h2>&nbsp;&nbsp;&raquo; On one image (of the set or not)</h2>
+
+<?php
+$link_options = array(
+    'title'     => 'Lightbox2-image',
+    'slidename' => 'image_link_to_lightbox_slideshow',
+);  
+
+echo light_slide_image(
+  'http://gallery.coilblog.com/d/16-2/big_eyes_cat.jpg',
+  $images, 
+  $link_options); 
+?>
+
+<br/><br/>
+<br/>
+<h2>&nbsp;&nbsp;&raquo; On a text link</h2>
+
+<?php 
+
+$link_options = array(
+    'title'     => 'Lightbox2-tewt',
+    'slidename' => 'text_link_to_lightbox_slideshow',
+);  
+
+echo light_slide_text('Click me to show the slide !!', $images, $link_options);
+  }}}
+  
+  * 4 - To display a modal box with the content of the result of a symfony action (check the '''_modalbox.php''' template inside the plugin module)
+  
+  {{{
+<hr/>
+<br/><br/><br/>
+<h1>MODAL BOX</h1>
+<hr/>
+
+<?php 
+// Modal Lightbox plugin test
+$link_options = array(
+    'title' => 'sfLightboxPlugin',
+    'size'  => '550x200',
+    'speed' => '6'
+);
+
+// or
+//$link_options='title=sfLightboxPlugin size=450x180 speed=5';
+//$link_options='title="sfLightboxPlugin" class=resizespeed_5 blocksize_450x180';
+ 
+echo light_modallink(
+  '&raquo; Link to test the modal box &laquo;', 
+  'sfLightboxPlugin/modal', 
+  $link_options
+);
+  }}}  
+
+  Of course here i use external images, but you can put path related to your '''images''' directory as you would do with the standard symfony '''image_tag function'''.
+
+  You can change the class or options to adjust the wanted size or speed. You can use a route instead of a 'module/action'. Check [http://www.huddletogether.com/projects/lightbox2/ the official homepage of the Lightbox2 library], moreover the plugin includes a demo as a module, just enable the '''sfLightbox''' module in your settings.yml file then call the demo in your application http://www.domain.com/sfLightbox. You can also check the live demo on my [http://snippets.strangebuzz.com/index.php/sfLightbox symfony blog]
+
+  * That's all, have fun, [http://www.strangebuzz.com COil] ;)
+
+=== TODO ===
+
+=== Versions ===
+
+(check the changelog TAB since the 1.0.7 version)
+
+== 1.0.6 ==
+  * Updated lightbox library to v2.03.3
+  * 3 new new helpers (light_image_text, light_slide_image, light_slide_text)
+  * Slideshow navigation with the keyboard (left, right, ESC)
+
+== 1.0.5 ==
+  * Added a demo as a symfony module that does the excalty the same as the official demo page of the library
+  * Change options handling for light_modallink to allow 3 different syntaxes
+
+== 1.0.4 ==
+  * `LightboxHelper.php` :
+    When creating a slideshow the caption of the images are now taken from the title attribute of each images if it exists whereas it is taken from the title attribute of the link if not (before it was always taken from the title link attribute)
+
+== 1.0.3 ==
+  * modalbox.js 
+    now allows to call initModalbox several times (in case a modal link is created dynamically, after page load). Don't forget to call initModalbox() again when you create a new modal link.
+  * config.php :
+    corrected wrong paths stored in config
+
+== 1.0.2 ==
+  * Helpers enhancements
+    options are now parsed so they can be scalar or array, just like the link_to helper 
+    light_modallink : added 'speed' and 'size' options (using regular classes is still allowed to keep BC)
+  * modalbox.js fixes :
+      removed some unused, unitialized variables that could cause JS errors in IE6 in some cases.
+  * File structure changes :
+      Removed the 'lightbox' folder in web/css, web/js and web/images
+      Prepared for next release in web/images, as closelabel.gif will be culture-dependent
+
+== 1.0.1 ==
+  * Some bug fixes in modalbox.js and also modalbox.css which affected IE6/7 and Opera.
+  * Renaiming of some html identifiers in modalbox to allow use of modalbox and lightbox in the same document. (more info in modalbox.js file)
+  * Modified default close image from 'closelabel.gif' which was culture dependent to 'close.gif' (only a close cross).
+
+== 1.0.0 ==
+  * First version

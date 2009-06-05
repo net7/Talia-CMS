@@ -1,0 +1,13 @@
+fillin:
+  enabled: on
+  param:
+    name: cms_tools_update_page
+
+fields:
+  new_slug:
+    required:
+      msg:            Please enter a path
+    sfRegexValidator:
+      pattern:        '#^[a-zA-Z0-9-_/]*$#'
+      match:          true
+      match_error:    A path can only be composed of alphanumeric characters and - _ / .

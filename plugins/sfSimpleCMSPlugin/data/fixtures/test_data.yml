@@ -1,0 +1,244 @@
+sfSimpleCMSPage:
+  home:
+    slug:         home
+    template:     home
+    tree_left:    1
+    tree_right:   12
+    is_published: true
+
+  about-slots:
+    slug:         about-slots
+    template:     simplePage
+    tree_left:    2
+    tree_right:   7
+    tree_parent:  home
+    is_published: true
+
+  about-slots-images:
+    slug:         about-slots/images
+    template:     simplePage
+    tree_left:    3
+    tree_right:   4
+    tree_parent:  about-slots
+    is_published: true
+    
+  about-slots-components:
+    slug:         about-slots/components
+    template:     simplePage
+    tree_left:    5
+    tree_right:   6
+    tree_parent:  about-slots
+    is_published: true
+        
+  faq:
+    slug:         faq
+    template:     simplePage
+    tree_left:    8
+    tree_right:   9
+    tree_parent:  home
+    is_published: false
+
+  lorem:
+    slug:         lorem
+    template:     simplePage
+    tree_left:    10
+    tree_right:   11
+    tree_parent:  home
+    is_published: true
+    
+
+sfSimpleCMSSlot:
+
+  home_en_title:
+    page_id:      home
+    culture:      en
+    name:         title
+    value:        Welcome to sfSimpleCMS
+  home_en_slot1:
+    page_id:      home
+    culture:      en
+    name:         slot1
+    type:         RichText
+    value:        You have successfully installed the sfSimpleCMS plugin.
+  home_en_slot2:
+    page_id:      home
+    culture:      en
+    name:         slot2
+    type:         RichText
+    value:        |
+      <p>You can now Start using the Content Management features of this plugin.</p>
+      <p>Start by navigating across pages to discover the way the page controller works, and follow the instructions given on every page. The test data is given as an inline help.</p>
+      <p>If you encounter a problem or a bug, please report it to the symfony forum, under the "Plugins" category, at the following address: <a href="http://www.symfony-project.com/forum/index.php/f/12/">http://www.symfony-project.com/forum/index.php/f/12/</a>.</p>
+      <p>Feel free to edit/erase any of the default pages, and have fun!.</p>
+  home_en_slot3:
+    page_id:      home
+    culture:      en
+    name:         slot3
+    type:         Modular
+    value:        |
+      test1:
+        component: sfSimpleCMS/latestPages
+
+  about_en_title:
+    page_id:      about-slots
+    culture:      en
+    name:         title
+    value:        About Slots
+  about_en_slot1:
+    page_id:      about-slots
+    culture:      en
+    name:         slot1
+    value:        |
+      In sfSimpleCMS, pages are made of slots. According to the template you choose, there can be various <i>types</i> and <i>number</i> of slots.
+  about_en_slot2:
+    page_id:      about-slots
+    culture:      en
+    name:         slot2
+    type:         RichText
+    value:        |
+      <p>This is the main slot of the page. As it is defined as a Rich Text slot, the HTML that it contains is <i>rendered</i> in the frontend. The previous slot (the article overview) is defined as a SimpleText, so the HTML code it contains is escaped.</p>
+      <p>Each slot is an <b>editable part of the page</b>. To edit a slot, first switch to edit mode by clicking the "edit" link in the "Edition Tools" floating box. The page then reloads, and slots now appear in a blue frame. Double-clicking a slot shows a form to edit its content. According to the type of the slot, the form does not show the same controls. A SimpleText slot, for instance, is edited in a simple textarea, while a RichText slot is edited in a WYSIWYG JavaScript editor.</p>
+      <p>After changing the content of a slot, just clieck on the "update" button. The slot will return to preview, and the content will be updated in the backend without reloading the page - the content is saved.</p>
+      <p>You can choose to change a slot type, for instance to switch from SimpleText to RichText. To do so, you need to be in edit mode and to edit a slot. At the end of the form, before the validation button, you will find a "Type" drop-down. Select the new type for the slot, validate the form, and you're done.</p>
+      <p>Here you will find details about some special slot types:</p>
+      <ul>
+        <li><a class="cms_page_navigation" href="about-slots/images">Image slots</a></li>
+        <li><a class="cms_page_navigation" href="about-slots/components">Component slots</a></li>
+      </ul>
+  about_en_slot3:
+    page_id:      about-slots
+    culture:      en
+    name:         slot3
+    type:         Php
+    value:        |
+      This slot is a bit particular: it results from the execution of some PHP code. Double-click it in edit mode to see the source: you will see that it is a slot of type PHP.<br/>
+      <div align="center">Today's date is <?php echo "<?php echo date('Y-m-d') ?>" ?>.</div>
+  about_en_slot4:
+    page_id:      about-slots
+    culture:      en
+    name:         slot4
+    type:         RichText
+    value:        |
+      <p>The <i>Related Content</i> and the <i>References</i> headers above are not editable, because they are part of the template. A template is just an arrangement of slots with some HTML code in it. A template defines both a type of content, and a specific layout.</p>
+      <p>You can modify existing templates or add new ones. For instance, to change this page's template, switch to 'edit' mode and, in the "Page properties" pane, choose another template in the "Template" dropdown list.</p>
+
+  about_images_en_title:
+    page_id:      about-slots-images
+    culture:      en
+    name:         title
+    value:        About Image Slots
+  about_images_en_slot1:
+    page_id:      about-slots-images
+    culture:      en
+    name:         slot1
+    value:        A special type of slot allows you to insert an image instead of text.
+  about_images_en_slot2:
+    page_id:      about-slots-images
+    culture:      en
+    name:         slot2
+    type:         RichText
+    value:        |
+      <p>The next slot contains an image because it is of type "Image". Edit it to see how to change the image.</p>
+      <p>You can easily extend the sfSimpleCMSPlugin to add new slot types. By writing custom slot types, you will better define the components of a content type. For instance, if you want to display recipes, you probably an <i>Ingredients</i> slot type, as well as some searchable slots like <i>Difficulty</i> and <i>Type</i>, which should be enumerables defined in their own slot type.</p>
+  about_images_en_slot3:
+    page_id:      about-slots-images
+    culture:      en
+    name:         slot3
+    type:         Image
+    value:        "src: /sfSimpleCMSPlugin/images/coffee_machine.png"
+
+  about_components_en_title:
+    page_id:      about-slots-components
+    culture:      en
+    name:         title
+    value:        About Modular Slots
+  about_components_en_slot1:
+    page_id:      about-slots-components
+    culture:      en
+    name:         slot1
+    value:        If your application offers components, they can be used to fill the content of a slot.
+  about_components_en_slot2:
+    page_id:      about-slots-components
+    culture:      en
+    name:         slot2
+    type:         RichText
+    value:        |
+      <p>The next slot results from the execution of a component because it is of type "List of component". Edit it to see how to change the image.</p>
+      <p>By using components inside pages, you can add dynamically generated data to pages that would otherwise need manual modification. This is very useful to display lists of pages or comments, user ratings, feeds from other sources, etc. As you can call any component, even with parameters, there is <b>no limit</b> to the type of data that you can insert in a CMS page. Even data taken from the database, a web service or a third-party website can be integrated that way.</p>
+  about_components_en_slot3:
+    page_id:      about-slots-components
+    culture:      en
+    name:         slot3
+    type:         Modular
+    value:        |
+      test1:
+        component: sfSimpleCMS/latestPages
+              
+  faq_en_title:
+    page_id:      faq
+    culture:      en
+    name:         title
+    value:        Frequently Asked Questions
+  faq_en_slot2:
+    page_id:      faq
+    culture:      en
+    name:         slot1
+    type:         RichText
+    value:        |
+      <ul>
+        <li><a href="#faq1">Can I change the layout/template/slot type/whatever?</a></li>
+        <li><a href="#faq2">When will you add [my favorite feature]?</a></li>
+      </ul>
+  faq_en_slot3:
+    page_id:      faq
+    culture:      en
+    name:         slot2
+    type:         RichText
+    value:        |
+      <h3 name="faq1">Can I change the layout/template/slot type/whatever?</h3>
+      <p>You can change everything, either programatically or by using the onine interface. The elements that concern the application structure (e.g. templates, slot types) are to be modified programatically. This makes their deployment easier (no need to synchronize databases, just files). Other elements (like page titles) can be edited online, directly in production.</p>
+      <h3 name="faq2">When will you add [my favorite feature]?</h3>
+      <p>Probably not that soon. The sfSimpleCMSPlugin is designed to be simple, fast and easy to adapt. Most of the complicated stuff that full-featured CMS engines offer can already be done within sfSimpleCMS one way or another.</p>
+
+  lorem_en_title:
+    page_id:      lorem
+    culture:      en
+    name:         title
+    value:        Lorem Ipsum
+  lorem_en_slot1:
+    page_id:      lorem
+    culture:      en
+    name:         slot1
+    value:        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+  lorem_en_slot2:
+    page_id:      lorem
+    culture:      en
+    name:         slot2
+    value:        |
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+      
+      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+      
+      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+      
+      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  lorem_en_slot3:
+    page_id:      lorem
+    culture:      en
+    name:         slot3
+    type:         RichText
+    value:        |
+      <ul>
+        <li><a href="#" href="#">dolor sit amet</a></li>
+        <li><a href="#" href="#">consectetur adipisicing elit</a></li>
+        <li><a href="#" href="#">sed do eiusmod tempor </a></li>
+        <li><a href="#" href="#">incididunt ut labore et dolore magna aliqua</a></li>
+      </ul>
+  lorem_en_slot4:
+    page_id:      lorem
+    culture:      en
+    name:         slot4
+    type:         RichText
+    value:        Ut enim, <i>ad minim veniam</i>, quis nostrud exercitation.

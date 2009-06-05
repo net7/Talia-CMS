@@ -1,0 +1,21 @@
+generator:
+  class:          sfPropelAdminGenerator
+  param:
+    model_class:  sfSimpleCMSPage
+    theme:        default      
+
+    list:
+      title:      List of Pages
+      display:    [slug_with_level, template, _localizations, _is_published, created_at, updated_at]
+      fields:
+        slug_with_level: { name: Path }
+        slug: { name: Path }
+      filters:    [slug, template]
+      object_actions:
+        addcomment:   
+          name:        View
+          action:      editPage
+          icon:        /sfSimpleCMSPlugin/images/page_white_edit.png
+        _delete: -
+      actions: []
+      sort:       tree_left
