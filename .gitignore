@@ -10,6 +10,7 @@
 /config/propel.ini
 /web/css/img/bg_head.gif
 /web/css/img/bg_mainhead.jpg
-/web/documents/
+/web/documents/*
+!/web/documents/.gitignore
 /web/static/css/img/bg_head.gif
 /web/static/css/img/bg_mainhead.jpg
