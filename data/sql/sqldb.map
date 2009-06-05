@@ -2,3 +2,4 @@
 lib.model.schema.sql=propel
 plugins.sfGuardPlugin.lib.model.schema.sql=propel
 plugins.sfSimpleCMSPlugin.lib.model.schema.sql=propel
+plugins.sfAssetsLibraryPlugin.lib.model.schema.sql=propel

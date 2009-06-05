@@ -47,3 +47,7 @@ all:
         title: Italiano
       fr:
         title: Français
+
+  sfMediaLibrary:
+    upload_dir: documents
+    use_thumbnails: false

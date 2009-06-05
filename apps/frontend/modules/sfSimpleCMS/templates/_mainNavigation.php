@@ -57,6 +57,7 @@ $home_title=$home->getTitle($sf_user->getCulture());
 	<li> <?php echo link_to('login','@sf_guard_signin')?></li>
 <?php else: ?>
 	<li> <?php echo link_to('edit pages','sfSimpleCMSAdmin/list')?></li>
+	<li> <?php echo link_to('manage documents','sfMediaLibrary')?></li>
 	<li> <?php echo link_to('manage users','sfGuardUser/list')?></li>
 	<li> <?php echo link_to('logout','@sf_guard_signout')?></li>
 <?php endif; ?>

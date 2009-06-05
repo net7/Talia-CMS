@@ -1,0 +1,15 @@
+/log/
+/cache/
+*~
+/apps/frontend/config/app.yml
+/apps/frontend/config/routing.yml
+/apps/frontend/config/view.yml
+/apps/frontend/templates/_header.php
+/config/config.php.bak
+/config/databases.yml
+/config/propel.ini
+/web/css/img/bg_head.gif
+/web/css/img/bg_mainhead.jpg
+/web/documents/
+/web/static/css/img/bg_head.gif
+/web/static/css/img/bg_mainhead.jpg
