@@ -9,9 +9,9 @@ Options +FollowSymLinks +ExecCGI
 
   # we skip all files with .something
   # comment the following 3 lines to allow periods in routes
-  RewriteCond %{REQUEST_URI} \..+$
-  RewriteCond %{REQUEST_URI} !\.html$
-  RewriteRule .* - [L]
+  # RewriteCond %{REQUEST_URI} \..+$
+  # RewriteCond %{REQUEST_URI} !\.html$
+  # RewriteRule .* - [L]
 
   # we check if the .html version is here (caching)
   RewriteRule ^$ index.html [QSA]

@@ -2,8 +2,8 @@ propel.targetPackage       = lib.model
 propel.packageObjectModel  = true
 propel.project             = ice
 propel.database            = mysql
-propel.database.createUrl  = mysql://root:id-yeet-ok-ghol@localhost/
-propel.database.url        = mysql://cms:8uK8D6bUu8c8wxu@localhost/cms_nietzsche
+propel.database.createUrl  = mysql://root:@localhost/
+propel.database.url        = mysql://cms:secret@localhost/cms_nietzsche
 propel.mysql.tableType     = InnoDB
 
 propel.addGenericAccessors = true
