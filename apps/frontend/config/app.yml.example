@@ -7,7 +7,8 @@ all:
 
 
 all:
-  # googleAnalyticsId:		XXXX
+  # discovery:
+  #   googleAnalyticsId:		XXXX
   sfSimpleCMS:
     default_text:           '[add text here]'   # Default text for page editable parts
     routes_register:        off                  # Use the plugin's routes 

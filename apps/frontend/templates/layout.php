@@ -45,7 +45,7 @@
 </div>
 <!-- page_ext -->
 
-<?php $google_id = sfConfig::get('googleAnalyticsId', ''); ?>
+<?php $google_id = sfConfig::get('app_discovery_googleAnalyticsId', ''); ?>
 
 <?php if($google_id != '') { ?>
 
